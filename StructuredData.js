@@ -140,7 +140,7 @@ console.log(totalFullyVaccinatedPets(allPets));
 //--------------------------------------------------------------------------------------------
 
 console.log(
-  "What are the names of all the pets, and what type of animal is each?"
+  "4 .What are the names of all the pets, and what type of animal is each?"
 );
 
 const personPetsDetails = (pets) => {
@@ -164,16 +164,6 @@ console.log("6. How many hobbies are shared across the group? What are they?");
 const allPeopleHobbies = (data) => data.flatMap(({ hobbies }) => hobbies);
 const hobbiesName = (data) =>
   allPeopleHobbies(data).map(({ category }) => category);
-
-// const totalHobbiesAndTheirNames = hobbiesName.reduce(
-//   (uniquesHobbies, hobby) => {
-//     return uniquesHobbies.includes(hobby)
-//       ? uniquesHobbies
-//       : [...uniquesHobbies, hobby];
-//   },
-//   []
-// );
-
 console.log(
   "Hobbies : ",
   hobbiesName(data),
@@ -229,9 +219,7 @@ console.log(totalIndividualOwnPet(data));
 //--------------------------------------------------------------------------------------------
 
 console.log("11. Which pets are associated with specific favorite activities?");
-console.log(
-  allPets.flatMap(({ name, favouriteActivity }) => [name, favouriteActivity])
-);
+console.log(allPets.flatMap(({ name, favouriteActivity }) => [name, favouriteActivity]));
 
 //--------------------------------------------------------------------------------------------
 
@@ -261,6 +249,7 @@ const totalVacinatedPets = totalPetsOfThosePeople.filter(
 console.log(totalVacinatedPets);
 //---------------------------------------------------------------------------------------------
 console.log("14. What is the most common type of pet among the group?");
+
 const getUniqueElementArray = (noDublicate, element) => {
   if (!noDublicate.includes(element)) {
     noDublicate.push(element);

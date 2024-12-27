@@ -6,15 +6,15 @@ const data = [
     city: "Pune",
     education: "Computer Science",
     hasVehicle: true,
-    employmentStatus: true,
+    isEmployed: true,
     hobbies: [
       {
-        name: "chess",
-        category: "",
+        name: "playing",
+        category: "chess",
       },
       {
         name: "gardening",
-        category: "",
+        category: "gardening",
       },
     ],
     pets: [
@@ -35,7 +35,7 @@ const data = [
     city: "Bangalore",
     education: "Computer Science",
     hasVehicle: false,
-    employmentStatus: false,
+    isEmployed: false,
     pets: [
       {
         name: "kiwi",
@@ -79,7 +79,7 @@ const data = [
     hobbies: [
       {
         name: "gardening",
-        catoegory: "rose garden",
+        category: "rose garden",
       },
       {
         name: "reading",
@@ -87,7 +87,7 @@ const data = [
       },
     ],
     hasVehicle: false,
-    employmentStatus: true,
+    isEmployed: true,
   },
   {
     name: "kavya",
@@ -112,16 +112,16 @@ const data = [
       { name: "binge-watching", category: "sci-fi shows" },
     ],
     hasVehicle: false,
-    employmentStatus: false,
+    isEmployed: false,
   },
 ];
 
 //--------------------------------------------------------------------------------------------
 
 console.log("1. How many individuals are currently employed?");
-const noOfEmployed = (data) =>
-  data.filter(({ employmentStatus }) => employmentStatus);
+const noOfEmployed = (data) => data.filter(({ isEmployed }) => isEmployed);
 console.log(noOfEmployed(data).length);
+
 //--------------------------------------------------------------------------------------------
 
 console.log("2. How many people own a car?");
@@ -132,22 +132,24 @@ console.log(totalPeopleHaveOwnCar(data).length);
 
 console.log("3. How many pets are fully vaccinated?");
 
-const allPets = data.flatMap(({ pets }) => pets);
-const totalFullyVaccinatedPets = (allPets) =>
-  allPets.filter(({ isFullVaccinated }) => isFullVaccinated).length;
+const totalFullyVaccinatedPets = (data) => {
+  const allPets = data.flatMap(({ pets }) => pets);
+  return allPets.filter(({ isFullVaccinated }) => isFullVaccinated).length;
+};
 
-console.log(totalFullyVaccinatedPets(allPets));
+console.log(totalFullyVaccinatedPets(data));
 //--------------------------------------------------------------------------------------------
 
 console.log(
   "4 .What are the names of all the pets, and what type of animal is each?"
 );
 
-const personPetsDetails = (pets) => {
-  return pets.map(({ name, petType }) => ({ name, petType }));
+const personPetsDetails = (data) => {
+  const allPets = data.flatMap(({ pets }) => pets);
+  return allPets.map(({ name, petType }) => ({ name, petType }));
 };
 
-console.log(personPetsDetails(allPets));
+console.log(personPetsDetails(data));
 //--------------------------------------------------------------------------------------------
 
 console.log("5. Which cities do the individuals live in?");
@@ -160,53 +162,52 @@ console.log(citiesDetails(data));
 //--------------------------------------------------------------------------------------------
 
 console.log("6. How many hobbies are shared across the group? What are they?");
+const hobbiesName = (data) => {
+  const allPeopleHobbies = data.flatMap(({ hobbies }) => hobbies);
+  return allPeopleHobbies.map(({ category }) => category);
+};
 
-const allPeopleHobbies = (data) => data.flatMap(({ hobbies }) => hobbies);
-const hobbiesName = (data) =>
-  allPeopleHobbies(data).map(({ category }) => category);
-console.log(
-  "Hobbies : ",
-  hobbiesName(data),
-  "total : ",
-  hobbiesName(data).length
-);
+const totalHobbiesAndTheirName = (data) => {
+  const allHobbies = hobbiesName(data);
+  return { hobbies: allHobbies, total: allHobbies.length };
+};
+
+console.log(totalHobbiesAndTheirName(data));
 //--------------------------------------------------------------------------------------------
 
 console.log("7. How many pets belong to people who are currently unemployed?");
-const noUnemployedPerson = (data) =>
-  data.filter(({ employmentStatus }) => !employmentStatus);
 
-const numberOfPets = (data) =>
-  noUnemployedPerson(data).flatMap(({ pets }) => pets).length;
+const totalPetsBelongsToUnemployed = (data) => {
+   return  data.filter(({ isEmployed }) => !isEmployed).flatMap(({ pets }) => pets).length;;
+}
 
-console.log(numberOfPets(data));
+console.log(totalPetsBelongsToUnemployed(data));
 //--------------------------------------------------------------------------------------------
 
 console.log(
   "8. What is the average age of the individuals mentioned in the passage?"
 );
 
-const listOfAges = data.flatMap(({ age }) => age);
-
-const averageAge = function (listOfAges) {
+const averageAge = function (data) {
+  const listOfAges = data.flatMap(({ age }) => age);
   return listOfAges.reduce((sum, element) => sum + element) / listOfAges.length;
 };
 
-console.log(averageAge(listOfAges));
+console.log(averageAge(data));
 //--------------------------------------------------------------------------------------------
 
 console.log(
   "9. How many individuals have studied computer science, and how many of them have pets?"
 );
 
-const csGraduatedIndividuals = data.filter(
-  ({ education }) => education === "Computer Science"
-);
+const totalCsGraduatedIndividuals = (data) => {
+  const csIndividuals = data.filter(({ education }) => education === "Computer Science")
+  const totalIndividuals = csIndividuals.length;
+  const totalPets = csIndividuals.flatMap(({ pets }) => pets).length;
+  return [totalIndividuals, totalPets];
+}
 
-const totalIndividuals = csGraduatedIndividuals.length;
-const totalPets = csGraduatedIndividuals.flatMap(({ pets }) => pets).length;
-
-console.log(totalIndividuals, totalPets);
+console.log(totalCsGraduatedIndividuals(data));
 //------------------------------------------------------------------------------------------
 console.log("10. How many individuals own more than one pet?");
 
@@ -219,34 +220,49 @@ console.log(totalIndividualOwnPet(data));
 //--------------------------------------------------------------------------------------------
 
 console.log("11. Which pets are associated with specific favorite activities?");
-console.log(allPets.flatMap(({ name, favouriteActivity }) => [name, favouriteActivity]));
 
+const petsWithSpecificActivity = () => {
+  const allPets = data.flatMap(({ pets }) => pets);
+
+  return allPets.flatMap(({ name, favouriteActivity }) => [
+    name,
+    favouriteActivity,
+  ]);
+};
+
+console.log(petsWithSpecificActivity(data));
 //--------------------------------------------------------------------------------------------
 
 console.log(
   "12. What are the names of all animals that belong to people who live in Bangalore or Chennai"
 );
+const getNameOfAnimals = (data) => {
+  const peopleWhoLiveInBengaloreAndChennai = data.filter(
+    ({ city }) => city === "Bangalore" || city === "Chennai"
+  );
 
-const peopleWhoBelongToBengalore = data.filter(
-  ({ city }) => city === "Bangalore"
-);
-const animals = peopleWhoBelongToBengalore.flatMap(({ pets }) => pets);
-const nameOfAnimals = animals.flatMap(({ name }) => name);
+  const animals = peopleWhoLiveInBengaloreAndChennai.flatMap(
+    ({ pets }) => pets
+  );
 
-console.log(nameOfAnimals);
+  return animals.flatMap(({ name }) => name);
+};
+
+console.log(getNameOfAnimals(data));
 
 //---------------------------------------------------------------------------------------------
 
 console.log(
   "13. How many vaccinated pets belong to people who do not own a car?"
 );
-const peopleHaveNoCar = data.filter((person) => !person.hasVehicle);
-const totalPetsOfThosePeople = peopleHaveNoCar.flatMap(({ pets }) => pets);
-const totalVacinatedPets = totalPetsOfThosePeople.filter(
-  (isVaccinated) => isVaccinated
-).length;
 
-console.log(totalVacinatedPets);
+const totalVaccinatedPetsTheirOwnerHaveNoCar = (data) => {
+  const peopleHaveNoCar = data.filter((person) => !person.hasVehicle);
+  const totalPetsOfThosePeople = peopleHaveNoCar.flatMap(({ pets }) => pets);
+  return totalPetsOfThosePeople.filter((isVaccinated) => isVaccinated).length;
+};
+
+console.log(totalVaccinatedPetsTheirOwnerHaveNoCar(data));
 //---------------------------------------------------------------------------------------------
 console.log("14. What is the most common type of pet among the group?");
 
@@ -262,73 +278,85 @@ const removeDublication = (array) => {
   return array.reduce(getUniqueElementArray, []);
 };
 
-const allPetsType = allPets.flatMap((pet) => pet.petType);
-const uniquePetsType = removeDublication(allPetsType);
-
 const collectOccurencesOf = (uniquePetType) => {
   return (occurencess, petType) => {
     return petType === uniquePetType ? occurencess + 1 : occurencess;
   };
 };
 
-const findOccurencessOf = (uniquePetType) => {
-  return {
-    type: uniquePetType,
-    occurencess: allPetsType.reduce(collectOccurencesOf(uniquePetType), 0),
+const findOccurencessOf = (allPetsType) => {
+  return (uniquePetType) => {
+    return {
+      type: uniquePetType,
+      occurencess: allPetsType.reduce(collectOccurencesOf(uniquePetType), 0),
+    };
   };
 };
 
-const petsTypeAndOccurences = uniquePetsType.map(findOccurencessOf);
-const mostCommonPet = petsTypeAndOccurences.reduce((mostCommonPet, pet) => {
-  return mostCommonPet.occurencess > pet.occurencess ? mostCommonPet : pet;
-});
+const getMostCommonType = (data) => {
+  const allPetsType = data
+    .flatMap(({ pets }) => pets)
+    .map(({ petType }) => petType);
+  const uniquePetsType = removeDublication(allPetsType);
+  const petsTypeAndOccurences = uniquePetsType.map(
+    findOccurencessOf(allPetsType)
+  );
 
-const mostCommonPetName = mostCommonPet.name;
-console.log(mostCommonPet);
+  return petsTypeAndOccurences.reduce((mostCommonPet, pet) => {
+    return mostCommonPet.occurencess > pet.occurencess ? mostCommonPet : pet;
+  });
+};
+
+console.log(getMostCommonType(data));
 //---------------------------------------------------------------------------------------------
 
 console.log("15. How many individuals have more than two hobbies?");
 
-const totalIndividualsHaveMoreThanTwoHobbies = data.filter(
+const totalIndividualsHaveMoreThanTwoHobbies = (data) => data.filter(
   ({ hobbies }) => hobbies.length >= 2
 ).length;
 
-console.log(totalIndividualsHaveMoreThanTwoHobbies);
+console.log(totalIndividualsHaveMoreThanTwoHobbies(data));
 
 //---------------------------------------------------------------------------------------------
 
 console.log("16. How many individuals share at least one hobby with Ramesh?");
 
-const rameshdata = data.filter((person) => {
-  if (person.name === "Ramesh") return person;
-});
+const totalIndividualShareHobbyWithRamesh = (data) => {
+  const rameshData = data.find(({ name }) => name === "Ramesh");
+  const hobbiesOfRamesh = rameshData.hobbies.map(({ name }) => name);
+  
+  return data.reduce((count, person) => {
+    if (person.name === "Ramesh") {
+      return count;
+    }
 
-const hobbiesOfRamesh = rameshdata
-  .flatMap(({ hobbies }) => hobbies)
-  .flatMap((hobby) => hobby.name);
+    const isPersonHasShare = person.hobbies.some(({ name }) =>
+      hobbiesOfRamesh.includes(name)
+    );
 
-const individualsShare = data.reduce((count, person) => {
-  if (person.name === "Ramesh") {
-    return count;
-  }
+    return isPersonHasShare ? count + 1 : count;
+  }, 0);
+};
 
-  const isPersonHasShare = person.hobbies.some((hobby) =>
-    hobbiesOfRamesh.includes(hobby.name)
-  );
-
-  return isPersonHasShare ? count + 1 : count;
-}, 0);
-
-console.log(individualsShare);
+console.log(totalIndividualShareHobbyWithRamesh(data));
 //---------------------------------------------------------------------------------------------
 
 console.log("17. Which pet is the youngest, and what is its name?");
 
-const sortedPetsInAscending = allPets.sort((a, b) => {
-  return a.age - b.age;
-});
+const sortInAscending = (pets) => {
+  return pets.sort((a, b) => {
+    return a.age - b.age;
+  });
+};
 
-console.log([sortedPetsInAscending[0].petType, sortedPetsInAscending[0].name]);
+const getYoungestPetNameAndType = (data) => {
+  const allPets = data.flatMap(({ pets }) => pets);
+  const petSortInAscending = sortInAscending(allPets);
+  return [petSortInAscending[0].petType, petSortInAscending[0].name];
+};
+
+console.log(getYoungestPetNameAndType(data));
 
 //---------------------------------------------------------------------------------------------
 
@@ -336,37 +364,43 @@ console.log(
   "18. What types of books are mentioned as interests, and who reads them?"
 );
 
-const peopleInterestInBooks = data.filter(({ hobbies }) =>
-  hobbies.some((hobby) => hobby.name === "reading")
-);
-const bookNameAndReader = peopleInterestInBooks.map((person) =>
-  [
-    person.name,
-    person.hobbies.filter((hobby) => hobby.name === "reading"),
-  ].flat()
-);
+const getBookTypeAndReader = (data) => {
+  const peopleInterestInBooks = data.filter(({ hobbies }) =>
+    hobbies.some(({ name }) => name === "reading")
+  );
 
-console.log(bookNameAndReader);
+  return peopleInterestInBooks.map((person) =>
+    [
+      person.name,
+      person.hobbies
+        .filter(({ name }) => name === "reading")
+        .map(({ category }) => category),
+    ].flat()
+  );
+};
 
-// console.log(allhobbies);
+console.log(getBookTypeAndReader(data));
+
 //---------------------------------------------------------------------------------------------
 
 console.log(
   '19. How many individuals live in cities starting with the letter "B"?'
 );
-const allIndividualsWithCities = data.filter((person) => {
+
+const allIndividualsWithCities = (data) => data.filter((person) => {
   if (person.city[0] === "B") {
     return person;
-  }
-}).length;
-console.log(allIndividualsWithCities);
+  } 
+})
+
+console.log(allIndividualsWithCities(data).length);
 
 //---------------------------------------------------------------------------------------------
 
 console.log("20. Which individuals do not own any pets?");
 
-const individualsDoNotOwnAnyPets = data.filter((person) => {
+const individualsDoNotOwnAnyPets = (data) => data.filter((person) => {
   return person.pets.length === 0 ? person.name : "";
 });
 
-console.log(individualsDoNotOwnAnyPets);
+console.log(individualsDoNotOwnAnyPets(data));
